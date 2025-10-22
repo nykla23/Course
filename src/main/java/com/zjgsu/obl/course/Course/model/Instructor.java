@@ -1,9 +1,13 @@
 package com.zjgsu.obl.course.Course.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class Instructor {
     private String id;
     private String name;
     private String email;
+
 
     public Instructor() {}
     public Instructor(String id, String name, String email){
