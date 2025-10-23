@@ -59,4 +59,10 @@ public class EnrollmentRepository {
                .filter(e -> e.getStudentId().equals(studentId))
                .count();
     }
+
+    public Optional<Enrollment> findByCourseIdAndStudentId(String courseId, String studentId) {
+        return enrollments.values().stream()
+               .filter(e -> e.getCourseId().equals(courseId) && e.getStudentId().equals(studentId))
+               .findFirst();
+    }
 }
