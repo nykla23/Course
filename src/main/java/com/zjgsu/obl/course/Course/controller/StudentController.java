@@ -42,7 +42,7 @@ public class StudentController {
     @PostMapping
     public ResponseEntity<ApiResponse<Student>> createStudent(@RequestBody Student student) {
         try {
-            Student createdStudent = studentService.creatStudent(student);
+            Student createdStudent = studentService.createStudent(student);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success("Student created successfully", createdStudent));
         } catch (IllegalArgumentException e) {
