@@ -15,7 +15,7 @@ public class Enrollment {
     public Enrollment(String id, String studentId, String courseId) {
         this.id = id;
         this.studentId = studentId;
-        this.courseId = courseId;
+        this.courseId = courseId;//系统在创建课程时自动生成的UUID，并非课程代码
         this.enrolledAt = LocalDateTime.now();
     }
 

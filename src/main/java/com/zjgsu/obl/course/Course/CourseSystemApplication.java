@@ -59,7 +59,7 @@ public class CourseSystemApplication implements CommandLineRunner {
 		student1.setMajor("计算机科学与技术");
 		student1.setGrade(2024);
 		student1.setEmail("zhangsan@example.com");
-		studentService.creatStudent(student1);
+		studentService.createStudent(student1);
 
 		Student student2 = new Student();
 		student2.setStudentId("S2024002");
@@ -67,7 +67,7 @@ public class CourseSystemApplication implements CommandLineRunner {
 		student2.setMajor("软件工程");
 		student2.setGrade(2024);
 		student2.setEmail("lisi@example.com");
-		studentService.creatStudent(student2);
+		studentService.createStudent(student2);
 
 		System.out.println("测试数据初始化完成！");
 	}

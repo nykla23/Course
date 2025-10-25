@@ -24,7 +24,7 @@ public class StudentService {
         return studentRepository.findById(id);
     }
 
-    public Student creatStudent(Student student) {
+    public Student createStudent(Student student) {
         if(!isValidEmail(student.getEmail())){
             throw new IllegalArgumentException("Invalid email format");
         }
@@ -35,7 +35,7 @@ public class StudentService {
         }
 
         Optional<Student> existEmail = studentRepository.findByEmail(student.getEmail());
-        if (existStudent.isPresent()){
+        if (existEmail.isPresent()){
             throw new IllegalArgumentException("邮箱已存在");
         }
 

@@ -19,7 +19,7 @@ public class CourseRepository {
 
     public Optional<Course> findById(String id) {
         return Optional.ofNullable(courses.get(id));
-    }
+    }//这里是系统自动生成的UUID
 
     public Course save(Course course) {
         // 如果 course 的 id 为 null，则生成一个 UUID
