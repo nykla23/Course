@@ -495,9 +495,9 @@ S1001,王五,网络安全,2024,wangwu@test.com,400
 **成功响应:**
 ```json
 {
-  "code": 200,
-  "message": "Success",
-  "data": {"..."}
+   "code": 200,
+   "message": "Success",
+   "data": {"..."}
 }
 ```
 
