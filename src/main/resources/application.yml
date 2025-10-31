@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: dev  # 默认使用开发环境
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

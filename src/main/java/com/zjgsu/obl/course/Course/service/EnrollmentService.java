@@ -1,7 +1,5 @@
 package com.zjgsu.obl.course.Course.service;
 
-
-
 import com.zjgsu.obl.course.Course.exception.ResourceNotFoundException;
 import com.zjgsu.obl.course.Course.model.Course;
 import com.zjgsu.obl.course.Course.model.Enrollment;
@@ -36,17 +34,22 @@ public class EnrollmentService {
     }
 
     public Enrollment createEnrollment(Enrollment enrollment) {
-        // 检查课程是否存在
-        Optional<Course> course = courseRepository.findById(enrollment.getCourseId()); //这里的findById是课程代码
-        if (course.isEmpty()) {
-            throw new ResourceNotFoundException("课程不存在");
-        }
 
-        // 检查学生是否存在
+        // 根据 studentId 字符串查找 Student 实体
         Optional<Student> student = studentRepository.findByStudentId(enrollment.getStudentId());
         if (student.isEmpty()) {
             throw new ResourceNotFoundException("学生不存在");
         }
+
+        // 根据 courseId 字符串查找 Course 实体
+        Optional<Course> course = courseRepository.findByCode(enrollment.getCourseId());
+        if (course.isEmpty()) {
+            throw new ResourceNotFoundException("课程不存在");
+        }
+
+        // 设置对象关联
+        enrollment.setStudent(student.get());
+        enrollment.setCourse(course.get());
 
         // 检查是否已经选过该课程
         Optional<Enrollment> existingEnrollment = enrollmentRepository.findByCourseIdAndStudentId(

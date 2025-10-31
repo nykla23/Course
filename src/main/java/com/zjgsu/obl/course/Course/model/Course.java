@@ -1,13 +1,34 @@
 package com.zjgsu.obl.course.Course.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@Table(name = "courses")
 public class Course {
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private String id; // 系统生成的课程ID
+
+    @Column(name = "course_code", unique = true,nullable = false,length = 50)
     private String code; // 课程代码，如 "CS101"
+
+    @Column(nullable = false)
     private String title; // 课程名称
+
+    @Embedded
     private Instructor instructor; // 授课教师
+
+    @Embedded
     private ScheduleSlot schedule; // 课程安排
-    private Integer capacity; // 课程容量
-    private Integer enrolled; // 已选课人数，初始为0
+
+    @Column(nullable = false)
+    private Integer capacity = 0; // 课程容量
+
+    @Column(name = "enrolled_count")
+    private Integer enrolled = 0; // 已选课人数，初始为0
 
     public Course() {
         this.enrolled = 0;

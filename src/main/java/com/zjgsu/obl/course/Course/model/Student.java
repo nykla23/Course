@@ -1,15 +1,38 @@
 package com.zjgsu.obl.course.Course.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "students")
 public class Student {
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private String id; // UUID
+
+    @Column(name = "student_id", unique = true, nullable = false, length = 50)
     private String studentId; // 学号
+
+    @Column(nullable = false)
     private String name;
+
     private String major;
+
     private Integer grade;
+
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
     public Student() {
         this.createdAt = LocalDateTime.now();
