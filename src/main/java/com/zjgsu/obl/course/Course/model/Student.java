@@ -26,6 +26,7 @@ public class Student {
 
     @Column(unique = true, nullable = false)
     private String email;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

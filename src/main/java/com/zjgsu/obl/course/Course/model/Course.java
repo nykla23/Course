@@ -19,9 +19,20 @@ public class Course {
     private String title; // 课程名称
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "id", column = @Column(name = "instructor_id")),
+            @AttributeOverride(name = "name", column = @Column(name = "instructor_name")),
+            @AttributeOverride(name = "email", column = @Column(name = "instructor_email"))
+    })
     private Instructor instructor; // 授课教师
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "dayOfWeek", column = @Column(name = "schedule_day")),
+            @AttributeOverride(name = "startTime", column = @Column(name = "schedule_start_time")),
+            @AttributeOverride(name = "endTime", column = @Column(name = "schedule_end_time")),
+            @AttributeOverride(name = "expectedAttendance", column = @Column(name = "expected_attendance"))
+    })
     private ScheduleSlot schedule; // 课程安排
 
     @Column(nullable = false)
@@ -33,6 +44,7 @@ public class Course {
     public Course() {
         this.enrolled = 0;
     }
+
     public Course(String id, String code, String title, Instructor instructor, ScheduleSlot schedule, Integer capacity) {
         this.id = id;
         this.code = code;

@@ -28,8 +28,7 @@ public class Enrollment {
     @Column(name = "enrolled_at")
     private LocalDateTime enrolledAt;
 
-    // 为了保持API兼容性，添加这些 transient 字段
-    // 这些字段不会保存到数据库，但会在JSON响应中返回
+    // Transient 字段 - 不会保存到数据库，但会在JSON中返回
     @Transient
     private String studentId;
 
@@ -41,7 +40,7 @@ public class Enrollment {
         enrolledAt = LocalDateTime.now();
     }
 
-    // 原有的构造方法保持不变
+    // 构造方法
     public Enrollment() {
         this.enrolledAt = LocalDateTime.now();
     }
@@ -53,14 +52,13 @@ public class Enrollment {
         this.enrolledAt = LocalDateTime.now();
     }
 
-    // getter/setter 保持原有逻辑
+    // getter/setter
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
     public Student getStudent() { return student; }
     public void setStudent(Student student) {
         this.student = student;
-        // 自动设置 studentId 用于API响应
         if (student != null) {
             this.studentId = student.getStudentId();
         }
@@ -69,7 +67,6 @@ public class Enrollment {
     public Course getCourse() { return course; }
     public void setCourse(Course course) {
         this.course = course;
-        // 自动设置 courseId 用于API响应
         if (course != null) {
             this.courseId = course.getCode();
         }
@@ -81,7 +78,6 @@ public class Enrollment {
     public LocalDateTime getEnrolledAt() { return enrolledAt; }
     public void setEnrolledAt(LocalDateTime enrolledAt) { this.enrolledAt = enrolledAt; }
 
-    // 为了保持API兼容性，保留这些getter方法
     public String getStudentId() {
         return studentId != null ? studentId : (student != null ? student.getStudentId() : null);
     }
@@ -90,7 +86,6 @@ public class Enrollment {
         return courseId != null ? courseId : (course != null ? course.getCode() : null);
     }
 
-    // 也提供setter用于反序列化
     public void setStudentId(String studentId) { this.studentId = studentId; }
     public void setCourseId(String courseId) { this.courseId = courseId; }
 }
