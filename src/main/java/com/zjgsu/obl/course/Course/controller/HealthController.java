@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,16 +28,16 @@ public class HealthController {
             healthInfo.put("status", "UP");
             healthInfo.put("database", conn.getMetaData().getDatabaseProductName());
             healthInfo.put("version", conn.getMetaData().getDatabaseProductVersion());
-            healthInfo.put("timestamp", java.time.LocalDateTime.now());
+            healthInfo.put("timestamp", LocalDateTime.now());
 
             return ResponseEntity.ok(ApiResponse.success("数据库连接正常", healthInfo));
         } catch (Exception e) {
             healthInfo.put("status", "DOWN");
             healthInfo.put("error", e.getMessage());
-            healthInfo.put("timestamp", java.time.LocalDateTime.now());
+            healthInfo.put("timestamp", LocalDateTime.now());
 
             return ResponseEntity.status(503)
-                    .body(ApiResponse.error(503, "数据库连接失败: " + e.getMessage(), healthInfo));
+                    .body(ApiResponse.error(503, "数据库连接失败: " + e.getMessage()));
         }
     }
 }

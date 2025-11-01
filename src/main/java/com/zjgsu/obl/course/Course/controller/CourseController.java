@@ -1,4 +1,4 @@
-package com.zjgsu.obl.course.Course.controller; // 请替换 lh 为你的姓名缩写
+package com.zjgsu.obl.course.Course.controller;
 
 import com.zjgsu.obl.course.Course.common.ApiResponse;
 import com.zjgsu.obl.course.Course.model.Course;
@@ -29,7 +29,7 @@ public class CourseController {
         return courseService.getById(id)
                 .map(course -> ResponseEntity.ok(ApiResponse.success(course)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error(404, "Course not found", healthInfo)));
+                        .body(ApiResponse.error(404, "Course not found")));
     }
 
     // 创建课程
@@ -41,7 +41,7 @@ public class CourseController {
                     .body(ApiResponse.success("Course created successfully", createdCourse));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
+                    .body(ApiResponse.error(400, e.getMessage()));
         }
     }
 
@@ -53,7 +53,7 @@ public class CourseController {
             return ResponseEntity.ok(ApiResponse.success("Course updated successfully", updatedCourse));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Course not found", healthInfo));
+                    .body(ApiResponse.error(404, "Course not found"));
         }
     }
 
@@ -66,7 +66,38 @@ public class CourseController {
                     .body(ApiResponse.success("Course deleted successfully", null));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Course not found", healthInfo));
+                    .body(ApiResponse.error(404, "Course not found"));
         }
+    }
+
+    // 新增：按讲师ID查询课程
+    @GetMapping("/instructor/{instructorId}")
+    public ResponseEntity<ApiResponse<List<Course>>> getCoursesByInstructor(@PathVariable String instructorId) {
+        List<Course> courses = courseService.findByInstructorId(instructorId);
+        return ResponseEntity.ok(ApiResponse.success(courses));
+    }
+
+    // 新增：查询有剩余容量的课程
+    @GetMapping("/available")
+    public ResponseEntity<ApiResponse<List<Course>>> getAvailableCourses() {
+        List<Course> courses = courseService.findAvailableCourses();
+        return ResponseEntity.ok(ApiResponse.success(courses));
+    }
+
+    // 新增：按标题关键字搜索课程
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<Course>>> searchCourses(@RequestParam String keyword) {
+        List<Course> courses = courseService.findByTitleKeyword(keyword);
+        return ResponseEntity.ok(ApiResponse.success(courses));
+    }
+
+    // 新增：多条件组合查询
+    @GetMapping("/query")
+    public ResponseEntity<ApiResponse<List<Course>>> queryCourses(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String instructorId,
+            @RequestParam(required = false) String title) {
+        List<Course> courses = courseService.findByMultipleCriteria(code, instructorId, title);
+        return ResponseEntity.ok(ApiResponse.success(courses));
     }
 }

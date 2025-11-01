@@ -1,8 +1,8 @@
 package com.zjgsu.obl.course.Course.controller;
 
-
 import com.zjgsu.obl.course.Course.common.ApiResponse;
 import com.zjgsu.obl.course.Course.model.Enrollment;
+import com.zjgsu.obl.course.Course.model.EnrollmentStatus;
 import com.zjgsu.obl.course.Course.service.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class EnrollmentController {
                     .body(ApiResponse.success("Enrollment created successfully", createdEnrollment));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
+                    .body(ApiResponse.error(400, e.getMessage()));
         }
     }
 
@@ -39,7 +39,7 @@ public class EnrollmentController {
                     .body(ApiResponse.success("Enrollment deleted successfully", null));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Enrollment not found", healthInfo));
+                    .body(ApiResponse.error(404, "Enrollment not found"));
         }
     }
 
@@ -61,6 +61,39 @@ public class EnrollmentController {
     @GetMapping("/student/{studentId}")
     public ResponseEntity<ApiResponse<List<Enrollment>>> getEnrollmentsByStudent(@PathVariable String studentId) {
         List<Enrollment> enrollments = enrollmentService.findByStudentId(studentId);
+        return ResponseEntity.ok(ApiResponse.success(enrollments));
+    }
+
+    // 新增：按状态查询选课记录
+    @GetMapping("/status/{status}")
+    public ResponseEntity<ApiResponse<List<Enrollment>>> getEnrollmentsByStatus(@PathVariable EnrollmentStatus status) {
+        List<Enrollment> enrollments = enrollmentService.findByStatus(status);
+        return ResponseEntity.ok(ApiResponse.success(enrollments));
+    }
+
+    // 新增：统计课程活跃选课人数
+    @GetMapping("/course/{courseCode}/active-count")
+    public ResponseEntity<ApiResponse<Long>> getActiveEnrollmentCountByCourse(@PathVariable String courseCode) {
+        long count = enrollmentService.countActiveEnrollmentsByCourse(courseCode);
+        return ResponseEntity.ok(ApiResponse.success(count));
+    }
+
+    // 新增：检查学生是否已选某课程
+    @GetMapping("/check")
+    public ResponseEntity<ApiResponse<Boolean>> checkEnrollmentExists(
+            @RequestParam String studentId,
+            @RequestParam String courseCode) {
+        boolean exists = enrollmentService.hasActiveEnrollment(studentId, courseCode);
+        return ResponseEntity.ok(ApiResponse.success(exists));
+    }
+
+    // 新增：多条件组合查询
+    @GetMapping("/query")
+    public ResponseEntity<ApiResponse<List<Enrollment>>> queryEnrollments(
+            @RequestParam(required = false) String courseCode,
+            @RequestParam(required = false) String studentId,
+            @RequestParam(required = false) EnrollmentStatus status) {
+        List<Enrollment> enrollments = enrollmentService.findByMultipleCriteria(courseCode, studentId, status);
         return ResponseEntity.ok(ApiResponse.success(enrollments));
     }
 }

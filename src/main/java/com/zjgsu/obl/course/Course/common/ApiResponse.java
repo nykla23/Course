@@ -26,7 +26,7 @@ public class ApiResponse<T> {
     }
 
     // 快速创建错误响应的方法
-    public static <T> ApiResponse<T> error(int code, String message, Map<String, Object> healthInfo) {
+    public static <T> ApiResponse<T> error(int code, String message) {
         return new ApiResponse<>(code, message, null);
     }
 

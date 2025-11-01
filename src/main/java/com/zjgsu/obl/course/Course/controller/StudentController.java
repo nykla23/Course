@@ -1,7 +1,5 @@
 package com.zjgsu.obl.course.Course.controller;
 
-
-
 import com.zjgsu.obl.course.Course.common.ApiResponse;
 import com.zjgsu.obl.course.Course.model.Student;
 import com.zjgsu.obl.course.Course.service.EnrollmentService;
@@ -35,7 +33,7 @@ public class StudentController {
         return studentService.findById(id)
                 .map(student -> ResponseEntity.ok(ApiResponse.success(student)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error(404, "Student not found", healthInfo)));
+                        .body(ApiResponse.error(404, "Student not found")));
     }
 
     // 创建学生
@@ -47,7 +45,7 @@ public class StudentController {
                     .body(ApiResponse.success("Student created successfully", createdStudent));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
+                    .body(ApiResponse.error(400, e.getMessage()));
         }
     }
 
@@ -60,11 +58,11 @@ public class StudentController {
                 return ResponseEntity.ok(ApiResponse.success("Student updated successfully", updatedStudent));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error(404, "Student not found", healthInfo));
+                        .body(ApiResponse.error(404, "Student not found"));
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
+                    .body(ApiResponse.error(400, e.getMessage()));
         }
     }
 
@@ -74,13 +72,13 @@ public class StudentController {
         // 检查学生是否存在
         if (studentService.findById(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Student not found", healthInfo));
+                    .body(ApiResponse.error(404, "Student not found"));
         }
 
         // 检查学生是否有选课记录
         if (enrollmentService.hasEnrollments(id)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, "无法删除：该学生存在选课记录", healthInfo));
+                    .body(ApiResponse.error(400, "无法删除：该学生存在选课记录"));
         }
 
         boolean deleted = studentService.deleteStudent(id);
@@ -89,7 +87,39 @@ public class StudentController {
                     .body(ApiResponse.success("Student deleted successfully", null));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Student not found", healthInfo));
+                    .body(ApiResponse.error(404, "Student not found"));
         }
+    }
+
+    // 新增：按专业查询学生
+    @GetMapping("/major/{major}")
+    public ResponseEntity<ApiResponse<List<Student>>> getStudentsByMajor(@PathVariable String major) {
+        List<Student> students = studentService.findByMajor(major);
+        return ResponseEntity.ok(ApiResponse.success(students));
+    }
+
+    // 新增：按年级查询学生
+    @GetMapping("/grade/{grade}")
+    public ResponseEntity<ApiResponse<List<Student>>> getStudentsByGrade(@PathVariable Integer grade) {
+        List<Student> students = studentService.findByGrade(grade);
+        return ResponseEntity.ok(ApiResponse.success(students));
+    }
+
+    // 新增：按专业和年级查询学生
+    @GetMapping("/major/{major}/grade/{grade}")
+    public ResponseEntity<ApiResponse<List<Student>>> getStudentsByMajorAndGrade(
+            @PathVariable String major, @PathVariable Integer grade) {
+        List<Student> students = studentService.findByMajorAndGrade(major, grade);
+        return ResponseEntity.ok(ApiResponse.success(students));
+    }
+
+    // 新增：多条件组合查询
+    @GetMapping("/query")
+    public ResponseEntity<ApiResponse<List<Student>>> queryStudents(
+            @RequestParam(required = false) String studentId,
+            @RequestParam(required = false) String major,
+            @RequestParam(required = false) Integer grade) {
+        List<Student> students = studentService.findByMultipleCriteria(studentId, major, grade);
+        return ResponseEntity.ok(ApiResponse.success(students));
     }
 }

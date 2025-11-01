@@ -1,21 +1,24 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:coursedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:coursedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
     driver-class-name: org.h2.Driver
     username: sa
     password: ''
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create-drop  # 开发环境每次重启重建表
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-  # 启用 SQL 脚本初始化
+        dialect: org.hibernate.dialect.H2Dialect
+  # SQL 初始化配置
   sql:
     init:
-      mode: always
+      mode: always  # 总是执行初始化脚本
       platform: h2
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
   h2:
     console:
       enabled: true
@@ -25,8 +28,8 @@ spring:
 
 server:
   port: 8080
+  servlet:
+    context-path: /
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+# 开发环境特定配置
+debug: true
