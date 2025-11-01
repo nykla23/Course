@@ -133,4 +133,12 @@ public class CourseService {
     public List<Course> findByTitleKeyword(String keyword) {
         return courseRepository.findByTitleContainingIgnoreCase(keyword);
     }
+
+    public List<Course> findByInstructorId(String instructorId) {
+        return courseRepository.findByInstructorId(instructorId);
+    }
+
+    public List<Course> findByMultipleCriteria(String code, String instructorId,String title) {
+        return courseRepository.findByMultipleCriteria(code, instructorId, title);
+    }
 }

@@ -26,7 +26,7 @@ public class EnrollmentController {
                     .body(ApiResponse.success("Enrollment created successfully", createdEnrollment));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage()));
+                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
         }
     }
 
@@ -39,7 +39,7 @@ public class EnrollmentController {
                     .body(ApiResponse.success("Enrollment deleted successfully", null));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Enrollment not found"));
+                    .body(ApiResponse.error(404, "Enrollment not found", healthInfo));
         }
     }
 

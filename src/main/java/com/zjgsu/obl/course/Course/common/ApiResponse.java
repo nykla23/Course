@@ -1,5 +1,7 @@
 package com.zjgsu.obl.course.Course.common; // 请替换 lh 为你的姓名缩写
 
+import java.util.Map;
+
 public class ApiResponse<T> {
     private int code;
     private String message;
@@ -24,7 +26,7 @@ public class ApiResponse<T> {
     }
 
     // 快速创建错误响应的方法
-    public static <T> ApiResponse<T> error(int code, String message) {
+    public static <T> ApiResponse<T> error(int code, String message, Map<String, Object> healthInfo) {
         return new ApiResponse<>(code, message, null);
     }
 

@@ -35,7 +35,7 @@ public class StudentController {
         return studentService.findById(id)
                 .map(student -> ResponseEntity.ok(ApiResponse.success(student)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error(404, "Student not found")));
+                        .body(ApiResponse.error(404, "Student not found", healthInfo)));
     }
 
     // 创建学生
@@ -47,7 +47,7 @@ public class StudentController {
                     .body(ApiResponse.success("Student created successfully", createdStudent));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage()));
+                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
         }
     }
 
@@ -60,11 +60,11 @@ public class StudentController {
                 return ResponseEntity.ok(ApiResponse.success("Student updated successfully", updatedStudent));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error(404, "Student not found"));
+                        .body(ApiResponse.error(404, "Student not found", healthInfo));
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage()));
+                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
         }
     }
 
@@ -74,13 +74,13 @@ public class StudentController {
         // 检查学生是否存在
         if (studentService.findById(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Student not found"));
+                    .body(ApiResponse.error(404, "Student not found", healthInfo));
         }
 
         // 检查学生是否有选课记录
         if (enrollmentService.hasEnrollments(id)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, "无法删除：该学生存在选课记录"));
+                    .body(ApiResponse.error(400, "无法删除：该学生存在选课记录", healthInfo));
         }
 
         boolean deleted = studentService.deleteStudent(id);
@@ -89,7 +89,7 @@ public class StudentController {
                     .body(ApiResponse.success("Student deleted successfully", null));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Student not found"));
+                    .body(ApiResponse.error(404, "Student not found", healthInfo));
         }
     }
 }

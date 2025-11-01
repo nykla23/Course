@@ -24,6 +24,9 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
     // 按状态查询
     List<Enrollment> findByStatus(EnrollmentStatus status);
 
+    // 添加：按课程和状态组合查询
+    List<Enrollment> findByCourseAndStatus(Course course, EnrollmentStatus status);
+
     // 按课程和学生组合查询
     Optional<Enrollment> findByCourseAndStudent(Course course, Student student);
 
@@ -50,4 +53,14 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
     // 统计学生选课数量
     @Query("SELECT COUNT(e) FROM Enrollment e WHERE e.student.studentId = :studentId")
     long countByStudentId(@Param("studentId") String studentId);
+
+    // 添加：按多个条件组合查询
+    @Query("SELECT e FROM Enrollment e WHERE " +
+            "(:courseCode IS NULL OR e.course.code = :courseCode) AND " +
+            "(:studentId IS NULL OR e.student.studentId = :studentId) AND " +
+            "(:status IS NULL OR e.status = :status)")
+    List<Enrollment> findByMultipleCriteria(@Param("courseCode") String courseCode,
+                                            @Param("studentId") String studentId,
+                                            @Param("status") EnrollmentStatus status);
+
 }

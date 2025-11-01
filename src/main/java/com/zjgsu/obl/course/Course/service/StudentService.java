@@ -79,4 +79,21 @@ public class StudentService {
     private boolean isValidEmail(String email){
         return email != null && EMAIL_PATTERN.matcher(email).matches();
     }
+
+    public List<Student> findByMajor(String major) {
+        return studentRepository.findByMajor(major);
+    }
+
+    public List<Student> findByGrade(Integer grade) {
+        return studentRepository.findByGrade(grade);
+    }
+
+    public List<Student> findByMajorAndGrade(String major, Integer grade) {
+        return studentRepository.findByMajorAndGrade(major, grade);
+    }
+
+    public List<Student> findByMultipleCriteria(String studentId, String major, Integer grade) {
+        return studentRepository.findByMultipleCriteria(studentId, major, grade);
+    }
+
 }

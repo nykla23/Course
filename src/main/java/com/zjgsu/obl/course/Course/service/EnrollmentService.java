@@ -3,6 +3,7 @@ package com.zjgsu.obl.course.Course.service;
 import com.zjgsu.obl.course.Course.exception.ResourceNotFoundException;
 import com.zjgsu.obl.course.Course.model.Course;
 import com.zjgsu.obl.course.Course.model.Enrollment;
+import com.zjgsu.obl.course.Course.model.EnrollmentStatus;
 import com.zjgsu.obl.course.Course.model.Student;
 import com.zjgsu.obl.course.Course.respository.CourseRepository;
 import com.zjgsu.obl.course.Course.respository.EnrollmentRepository;
@@ -106,5 +107,28 @@ public class EnrollmentService {
     // 检查学生是否有选课记录
     public boolean hasEnrollments(String studentId) {
         return enrollmentRepository.countByStudentId(studentId) > 0;
+    }
+
+    public List<Enrollment> findByStatus(EnrollmentStatus status) {
+        return enrollmentRepository.findByStatus(status);
+    }
+
+    public long countActiveEnrollmentsByCourse(String courseCode) {
+        Optional<Course> course = courseRepository.findByCode(courseCode);
+        return course.map(c -> enrollmentRepository.countActiveEnrollmentsByCourse(c)).orElse(0L);
+    }
+
+    public boolean hasActiveEnrollment(String studentId, String courseCode) {
+        Optional<Student> student = studentRepository.findByStudentId(studentId);
+        Optional<Course> course = courseRepository.findByCode(courseCode);
+
+        if (student.isPresent() && course.isPresent()) {
+            return enrollmentRepository.existsByStudentAndCourseAndActive(student.get(), course.get());
+        }
+        return false;
+    }
+
+    public List<Enrollment> findByMultipleCriteria(String courseCode, String studentId, EnrollmentStatus status) {
+        return enrollmentRepository.findByMultipleCriteria(courseCode, studentId, status);
     }
 }

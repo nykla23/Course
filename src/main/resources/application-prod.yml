@@ -9,17 +9,20 @@ spring:
       minimum-idle: 5
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: validate  # 生产环境使用validate
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
+  # 生产环境也启用 SQL 初始化
+  sql:
+    init:
+      mode: always
+      platform: mysql
 
 server:
   port: 8080
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.SQL: WARN

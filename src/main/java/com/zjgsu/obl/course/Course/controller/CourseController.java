@@ -29,7 +29,7 @@ public class CourseController {
         return courseService.getById(id)
                 .map(course -> ResponseEntity.ok(ApiResponse.success(course)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error(404, "Course not found")));
+                        .body(ApiResponse.error(404, "Course not found", healthInfo)));
     }
 
     // 创建课程
@@ -41,7 +41,7 @@ public class CourseController {
                     .body(ApiResponse.success("Course created successfully", createdCourse));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.error(400, e.getMessage()));
+                    .body(ApiResponse.error(400, e.getMessage(), healthInfo));
         }
     }
 
@@ -53,7 +53,7 @@ public class CourseController {
             return ResponseEntity.ok(ApiResponse.success("Course updated successfully", updatedCourse));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Course not found"));
+                    .body(ApiResponse.error(404, "Course not found", healthInfo));
         }
     }
 
@@ -66,7 +66,7 @@ public class CourseController {
                     .body(ApiResponse.success("Course deleted successfully", null));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(404, "Course not found"));
+                    .body(ApiResponse.error(404, "Course not found", healthInfo));
         }
     }
 }

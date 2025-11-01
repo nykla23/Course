@@ -28,4 +28,11 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     // 检查课程代码是否存在
     boolean existsByCode(String code);
+
+    // 添加：按多个条件组合查询
+    @Query("SELECT c FROM Course c WHERE " +
+            "(:code IS NULL OR c.code = :code) AND " +
+            "(:instructorId IS NULL OR c.instructor.id = :instructorId) AND " +
+            "(:title IS NULL OR c.title LIKE %:title%)")
+    List<Course> findByMultipleCriteria(@Param("code") String code, @Param("instructorId") String instructorId, @Param("title") String title);
 }
