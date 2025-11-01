@@ -23,7 +23,7 @@ spring:
   # SQL 初始化配置
   sql:
     init:
-      mode: always  # 生产环境也执行初始化
+      mode: never  # 生产环境也执行初始化
       platform: mysql
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql

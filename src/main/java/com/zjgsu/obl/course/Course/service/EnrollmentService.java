@@ -45,12 +45,12 @@ public class EnrollmentService {
         }
 
         // 根据 courseId 字符串查找 Course 实体
-        Optional<Course> course = courseRepository.findByCode(enrollment.getCourseId());
+        Optional<Course> course = courseRepository.findById(enrollment.getCourseId());
         if (course.isEmpty()) {
             throw new ResourceNotFoundException("课程不存在");
         }
 
-        Optional<Enrollment> existingEnrollment = enrollmentRepository.findByStudentIdAndCourseCode(enrollment.getStudentId(), enrollment.getCourseId());
+        Optional<Enrollment> existingEnrollment = enrollmentRepository.findByCourseAndStudent(course.get(),student.get());
         if (existingEnrollment.isPresent()) {
             throw new IllegalArgumentException("该学生已经选过这门课程");
         }

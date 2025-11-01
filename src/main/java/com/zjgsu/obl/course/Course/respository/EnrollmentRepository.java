@@ -39,8 +39,8 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
     boolean existsByStudentAndCourseAndActive(@Param("student") Student student, @Param("course") Course course);
 
     // 按学生ID和课程代码查询（用于API兼容）
-    @Query("SELECT e FROM Enrollment e WHERE e.student.studentId = :studentId AND e.course.code = :courseCode")
-    Optional<Enrollment> findByStudentIdAndCourseCode(@Param("studentId") String studentId, @Param("courseCode") String courseCode);
+    @Query("SELECT e FROM Enrollment e WHERE e.course.id = :courseId AND e.student.id = :studentId")
+    Optional<Enrollment> findByCourseIdAndStudentId(@Param("courseId") String courseId, @Param("studentId") String studentId);
 
     // 按课程代码查询选课记录
     @Query("SELECT e FROM Enrollment e WHERE e.course.code = :courseCode")
