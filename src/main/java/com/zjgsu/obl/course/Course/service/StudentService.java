@@ -1,6 +1,8 @@
 package com.zjgsu.obl.course.Course.service;
 
 import com.zjgsu.obl.course.Course.model.Student;
+import com.zjgsu.obl.course.Course.respository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
+@Transactional
 public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
@@ -28,13 +31,11 @@ public class StudentService {
             throw new IllegalArgumentException("Invalid email format");
         }
 
-        Optional<Student> existStudent = studentRepository.findByStudentId(student.getStudentId());
-        if (existStudent.isPresent()){
+        if (studentRepository.existsByStudentId(student.getStudentId())) {
             throw new IllegalArgumentException("学号已存在");
         }
 
-        Optional<Student> existEmail = studentRepository.findByEmail(student.getEmail());
-        if (existEmail.isPresent()){
+        if (studentRepository.existsByEmail(student.getEmail())) {
             throw new IllegalArgumentException("邮箱已存在");
         }
 
@@ -42,10 +43,7 @@ public class StudentService {
     }
 
     public Student updateStudent(String id, Student student) {
-        Optional<Student> existStudent = studentRepository.findById(id);
-        if (existStudent.isEmpty()){
-            return null;
-        }
+        Student existStudent = studentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("学生不存在"));
 
         if(!isValidEmail(student.getEmail())){
             throw new IllegalArgumentException("邮箱格式不正确");
@@ -61,18 +59,21 @@ public class StudentService {
             throw new IllegalArgumentException("邮箱已被其他学生使用");
         }
 
-        student.setId(id);
-        return studentRepository.save(student);
+        existStudent.setStudentId(student.getStudentId());
+        existStudent.setName(student.getName());
+        existStudent.setMajor(student.getMajor());
+        existStudent.setGrade(student.getGrade());
+        existStudent.setEmail(student.getEmail());
+
+        return studentRepository.save(existStudent);
     }
 
     public boolean deleteStudent(String id) {
-        Optional<Student> existStudent = studentRepository.findById(id);
-        if (existStudent.isPresent()){
+        if (studentRepository.existsById(id)) {
             studentRepository.deleteById(id);
             return true;
-        }else {
-            return false;
         }
+        return false;
     }
 
     private boolean isValidEmail(String email){

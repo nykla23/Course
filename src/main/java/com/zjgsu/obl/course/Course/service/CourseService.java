@@ -25,6 +25,10 @@ public class CourseService {
         return courseRepository.findById(id);
     }
 
+    public Optional<Course> getByCode(String code) {
+        return courseRepository.findByCode(code);
+    }
+
     public Course createCourse(Course course) {
         // 添加必填字段验证
         if (course.getCode() == null || course.getCode().trim().isEmpty()) {
@@ -43,72 +47,90 @@ public class CourseService {
             throw new IllegalArgumentException("课程容量必须大于0");
         }
 
+        if (courseRepository.existsByCode(course.getCode())){
+            throw new IllegalArgumentException("课程代码已存在");
+        }
+
         return courseRepository.save(course);
     }
 
     public Course updateCourse(String id, Course courseUpdate) {
+
         // 检查课程是否存在
-        Optional<Course> existingCourseOpt = courseRepository.findById(id);
-        if (existingCourseOpt.isPresent()) {
-            Course existingCourse = existingCourseOpt.get();
 
-            // 合并更新逻辑 - 只更新非空的字段
-            if (courseUpdate.getCode() != null) {
-                existingCourse.setCode(courseUpdate.getCode());
-            }
-            if (courseUpdate.getTitle() != null) {
-                existingCourse.setTitle(courseUpdate.getTitle());
-            }
-            if (courseUpdate.getInstructor() != null) {
-                // 合并更新教师信息
-                Instructor existingInstructor = existingCourse.getInstructor();
-                Instructor updateInstructor = courseUpdate.getInstructor();
+        Course existingCourse = courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("课程不存在"));
 
-                if (updateInstructor.getId() != null) {
-                    existingInstructor.setId(updateInstructor.getId());
-                }
-                if (updateInstructor.getName() != null) {
-                    existingInstructor.setName(updateInstructor.getName());
-                }
-                if (updateInstructor.getEmail() != null) {
-                    existingInstructor.setEmail(updateInstructor.getEmail());
-                }
+        if (courseUpdate.getCode() != null && !courseUpdate.getCode().equals(existingCourse.getCode())) {
+            if (courseRepository.existsByCode(courseUpdate.getCode())) {
+                throw new IllegalArgumentException("课程代码已存在");
             }
-            if (courseUpdate.getSchedule() != null) {
-                // 合并更新课程安排
-                ScheduleSlot existingSchedule = existingCourse.getSchedule();
-                ScheduleSlot updateSchedule = courseUpdate.getSchedule();
-
-                if (updateSchedule.getDayOfWeek() != null) {
-                    existingSchedule.setDayOfWeek(updateSchedule.getDayOfWeek());
-                }
-                if (updateSchedule.getStartTime() != null) {
-                    existingSchedule.setStartTime(updateSchedule.getStartTime());
-                }
-                if (updateSchedule.getEndTime() != null) {
-                    existingSchedule.setEndTime(updateSchedule.getEndTime());
-                }
-                if (updateSchedule.getExpectedAttendance() != null) {
-                    existingSchedule.setExpectedAttendance(updateSchedule.getExpectedAttendance());
-                }
-            }
-            if (courseUpdate.getCapacity() != null) {
-                existingCourse.setCapacity(courseUpdate.getCapacity());
-            }
-
-            return courseRepository.save(existingCourse);  // 保存合并后的对象
-        } else {
-            return null;
+            existingCourse.setCode(courseUpdate.getCode());
         }
+
+        if (courseUpdate.getTitle() != null) {
+            existingCourse.setTitle(courseUpdate.getTitle());
+            }
+
+        if (courseUpdate.getInstructor() != null) {
+            Instructor existingInstructor = existingCourse.getInstructor();
+            Instructor updatedInstructor = courseUpdate.getInstructor();
+
+            if (updatedInstructor.getId() != null){
+                existingInstructor.setId(updatedInstructor.getId());
+            }
+
+            if (updatedInstructor.getName() != null){
+                existingInstructor.setName(updatedInstructor.getName());
+            }
+
+            if (updatedInstructor.getEmail() != null){
+                existingInstructor.setEmail(updatedInstructor.getEmail());
+            }
+        }
+
+        if (courseUpdate.getSchedule() != null) {
+            ScheduleSlot existingSchedule = existingCourse.getSchedule();
+
+            ScheduleSlot updatedSchedule = courseUpdate.getSchedule();
+
+            if (updatedSchedule.getDayOfWeek() != null){
+                existingSchedule.setDayOfWeek(updatedSchedule.getDayOfWeek());
+            }
+
+            if (updatedSchedule.getStartTime() != null){
+                existingSchedule.setStartTime(updatedSchedule.getStartTime());
+            }
+
+            if (updatedSchedule.getEndTime() != null){
+                existingSchedule.setEndTime(updatedSchedule.getEndTime());
+            }
+
+            if (updatedSchedule.getExpectedAttendance() != null){
+                existingSchedule.setExpectedAttendance(updatedSchedule.getExpectedAttendance());
+            }
+        }
+
+        if (courseUpdate.getCapacity() != null && courseUpdate.getCapacity() > 0) {
+            existingCourse.setCapacity(courseUpdate.getCapacity());
+        }
+
+        return courseRepository.save(existingCourse);
     }
 
     public boolean deleteCourse(String id){
-        Optional<Course> course = courseRepository.findById(id);
-        if (course.isPresent()){
+        if (courseRepository.existsById(id)) {
             courseRepository.deleteById(id);
             return true;
-        }else {
+        } else {
             return false;
         }
+    }
+
+    public List<Course> findAvailableCourses() {
+        return courseRepository.findAvailableCourses();
+    }
+
+    public List<Course> findByTitleKeyword(String keyword) {
+        return courseRepository.findByTitleContainingIgnoreCase(keyword);
     }
 }

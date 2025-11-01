@@ -4,6 +4,10 @@ import com.zjgsu.obl.course.Course.exception.ResourceNotFoundException;
 import com.zjgsu.obl.course.Course.model.Course;
 import com.zjgsu.obl.course.Course.model.Enrollment;
 import com.zjgsu.obl.course.Course.model.Student;
+import com.zjgsu.obl.course.Course.respository.CourseRepository;
+import com.zjgsu.obl.course.Course.respository.EnrollmentRepository;
+import com.zjgsu.obl.course.Course.respository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class EnrollmentService {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
@@ -44,37 +49,25 @@ public class EnrollmentService {
             throw new ResourceNotFoundException("课程不存在");
         }
 
-        // 设置对象关联
-        enrollment.setStudent(student.get());
-        enrollment.setCourse(course.get());
-
-        // 检查是否已经选过该课程
-        Optional<Enrollment> existingEnrollment = enrollmentRepository.findByCourseIdAndStudentId(
-                enrollment.getCourseId(), student.get().getId()); //这里使用学生的UUID
-
-        System.out.println("重复选课检查:");
-        System.out.println("课程ID: " + enrollment.getCourseId());
-        System.out.println("学生UUID: " + student.get().getId());
-        System.out.println("是否已存在选课记录: " + existingEnrollment.isPresent());
-
+        Optional<Enrollment> existingEnrollment = enrollmentRepository.findByStudentIdAndCourseCode(enrollment.getStudentId(), enrollment.getCourseId());
         if (existingEnrollment.isPresent()) {
             throw new IllegalArgumentException("该学生已经选过这门课程");
         }
 
-        // 检查课程容量
         Course courseObj = course.get();
-        if (courseObj.getEnrolled() >= courseObj.getCapacity()) {
+        long currentEnrollments = enrollmentRepository.countActiveEnrollmentsByCourse(courseObj);
+        if (currentEnrollments >= courseObj.getCapacity()) {
             throw new IllegalArgumentException("课程容量已满");
         }
+        // 设置对象关联
+        enrollment.setStudent(student.get());
+        enrollment.setCourse(courseObj);
 
-        // 设置 enrollment 的学生ID为学生的UUID（不是学号）
-        enrollment.setStudentId(student.get().getId());
-
-        // 创建选课记录
+        // 保存选课记录
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
 
         // 更新课程的已选人数
-        courseObj.setEnrolled(courseObj.getEnrolled() + 1);
+        courseObj.setEnrolled((int) currentEnrollments + 1);
         courseRepository.save(courseObj);
 
         return savedEnrollment;
@@ -83,17 +76,16 @@ public class EnrollmentService {
     public boolean deleteEnrollment(String id) {
         Optional<Enrollment> enrollment = enrollmentRepository.findById(id);
         if (enrollment.isPresent()) {
-            // 删除选课记录
+            Enrollment enrollmentObj = enrollment.get();
+            Course course = enrollmentObj.getCourse();
+
+            //删除选课记录
             enrollmentRepository.deleteById(id);
 
             // 更新课程的已选人数
-            String courseId = enrollment.get().getCourseId();
-            Optional<Course> course = courseRepository.findById(courseId);
-            if (course.isPresent()) {
-                Course courseObj = course.get();
-                courseObj.setEnrolled(courseObj.getEnrolled() - 1);
-                courseRepository.save(courseObj);
-            }
+            long currentEnrollments = enrollmentRepository.countActiveEnrollmentsByCourse(course);
+            course.setEnrolled((int) currentEnrollments);
+            courseRepository.save(course);
 
             return true;
         } else {
@@ -102,18 +94,13 @@ public class EnrollmentService {
     }
 
     // 根据课程ID查询选课记录
-    public List<Enrollment> findByCourseId(String courseId) {
-        return enrollmentRepository.findByCourseId(courseId);
+    public List<Enrollment> findByCourseId(String courseCode) {
+        return enrollmentRepository.findByCourseCode(courseCode);
     }
 
     // 根据学生ID查询选课记录
     public List<Enrollment> findByStudentId(String studentId) {
-        Optional<Student> student = studentRepository.findByStudentId(studentId);
-        if (student.isPresent()){
-            return enrollmentRepository.findByStudentId(student.get().getId());
-        }else {
-            return new ArrayList<>();
-        }
+        return enrollmentRepository.findByStudentId(studentId);
     }
 
     // 检查学生是否有选课记录

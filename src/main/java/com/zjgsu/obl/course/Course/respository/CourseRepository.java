@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, String> {
 
     // 按课程代码查询课程
-    Optional<Course> findByName(String code);
+    Optional<Course> findByCode(String code);
 
     // 按讲师ID查询
     @Query("SELECT c FROM Course c WHERE c.instructor.id = :instructorId")
