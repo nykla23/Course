@@ -4,6 +4,7 @@ import com.zjgsu.obl.course.Course.model.Course;
 import com.zjgsu.obl.course.Course.model.Instructor;
 import com.zjgsu.obl.course.Course.model.ScheduleSlot;
 import com.zjgsu.obl.course.Course.respository.CourseRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CourseService {
     @Autowired
     private CourseRepository courseRepository;

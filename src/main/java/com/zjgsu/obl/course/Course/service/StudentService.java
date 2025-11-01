@@ -1,7 +1,6 @@
 package com.zjgsu.obl.course.Course.service;
 
 import com.zjgsu.obl.course.Course.model.Student;
-import com.zjgsu.obl.course.Course.respository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

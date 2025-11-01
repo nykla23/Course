@@ -4,9 +4,6 @@ import com.zjgsu.obl.course.Course.exception.ResourceNotFoundException;
 import com.zjgsu.obl.course.Course.model.Course;
 import com.zjgsu.obl.course.Course.model.Enrollment;
 import com.zjgsu.obl.course.Course.model.Student;
-import com.zjgsu.obl.course.Course.respository.CourseRepository;
-import com.zjgsu.obl.course.Course.respository.EnrollmentRepository;
-import com.zjgsu.obl.course.Course.respository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
