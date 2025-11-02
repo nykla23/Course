@@ -92,10 +92,20 @@ public class StudentController {
     }
 
     // 新增：按专业查询学生
-    @GetMapping("/major/{major}")
-    public ResponseEntity<ApiResponse<List<Student>>> getStudentsByMajor(@PathVariable String major) {
-        List<Student> students = studentService.findByMajor(major);
-        return ResponseEntity.ok(ApiResponse.success(students));
+    @GetMapping("/major")
+    public ResponseEntity<ApiResponse<List<Student>>> getStudentsByMajor(@RequestParam String major) {
+        System.out.println("按专业查询: " + major);
+
+        try {
+            List<Student> students = studentService.findByMajor(major);
+            System.out.println("找到 " + students.size() + " 个学生");
+            return ResponseEntity.ok(ApiResponse.success(students));
+        } catch (Exception e) {
+            System.out.println("查询出错: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(500, "查询失败: " + e.getMessage()));
+        }
     }
 
     // 新增：按年级查询学生

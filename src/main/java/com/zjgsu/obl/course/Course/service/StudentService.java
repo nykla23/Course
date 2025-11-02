@@ -81,7 +81,10 @@ public class StudentService {
     }
 
     public List<Student> findByMajor(String major) {
-        return studentRepository.findByMajor(major);
+        System.out.println("Service: 按专业查询 - " + major);
+        List<Student> students = studentRepository.findByMajor(major);
+        System.out.println("Repository 返回: " + students.size() + " 个学生");
+        return students;
     }
 
     public List<Student> findByGrade(Integer grade) {
@@ -93,7 +96,19 @@ public class StudentService {
     }
 
     public List<Student> findByMultipleCriteria(String studentId, String major, Integer grade) {
-        return studentRepository.findByMultipleCriteria(studentId, major, grade);
+        System.out.println("多条件查询 - studentId: " + studentId + ", major: " + major + ", grade: " + grade);
+
+        List<Student> students = studentRepository.findByMultipleCriteria(studentId, major, grade);
+        System.out.println("查询结果数量: " + students.size());
+
+        // 打印所有学生信息用于调试
+        List<Student> allStudents = studentRepository.findAll();
+        System.out.println("数据库中学生总数: " + allStudents.size());
+        for (Student s : allStudents) {
+            System.out.println("学生: " + s.getStudentId() + ", " + s.getName() + ", " + s.getMajor() + ", " + s.getGrade());
+        }
+
+        return students;
     }
 
 }

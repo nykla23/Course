@@ -5,7 +5,6 @@ spring:
     username: sa
     password: ''
   jpa:
-    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop  # 开发环境每次重启重建表
     show-sql: true
@@ -13,7 +12,6 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
-
   # SQL 初始化配置
   sql:
     init:
@@ -21,7 +19,6 @@ spring:
       platform: h2
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
-
   h2:
     console:
       enabled: true

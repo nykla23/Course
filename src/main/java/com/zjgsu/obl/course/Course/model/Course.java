@@ -3,6 +3,8 @@ package com.zjgsu.obl.course.Course.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "courses")
 public class Course {
@@ -38,8 +40,25 @@ public class Course {
     @Column(nullable = false)
     private Integer capacity = 0; // 课程容量
 
-    @Column(name = "enrolled_count")
+    @Column(name = "enrolled_count",nullable = false)
     private Integer enrolled = 0; // 已选课人数，初始为0
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public Course() {
         this.enrolled = 0;
@@ -95,5 +114,21 @@ public class Course {
     }
     public void setEnrolled(Integer enrolled) {
         this.enrolled = enrolled;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

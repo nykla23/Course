@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,8 @@ public class HealthController {
         Map<String, Object> healthInfo = new HashMap<>();
 
         try (Connection conn = dataSource.getConnection()) {
+
+            boolean tablesExist = checkTablesExist(conn);
             healthInfo.put("status", "UP");
             healthInfo.put("database", conn.getMetaData().getDatabaseProductName());
             healthInfo.put("version", conn.getMetaData().getDatabaseProductVersion());
@@ -39,5 +43,17 @@ public class HealthController {
             return ResponseEntity.status(503)
                     .body(ApiResponse.error(503, "数据库连接失败: " + e.getMessage()));
         }
+    }
+
+    private boolean checkTablesExist(Connection conn) throws SQLException {
+        String[] tables = {"courses", "students", "enrolments"};
+        for (String table : tables) {
+            try (ResultSet rs = conn.getMetaData().getTables(null, null, table, null)) {
+                if (!rs.next()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

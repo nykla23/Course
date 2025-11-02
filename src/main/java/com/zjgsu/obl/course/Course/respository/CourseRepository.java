@@ -23,7 +23,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     List<Course> findByTitleContainingIgnoreCase(String keyword);
 
     // 查询有剩余容量的课程
-    @Query("SELECT c FROM Course c WHERE c.capacity > c.enrolled")
+    @Query("SELECT c FROM Course c WHERE c.capacity > COALESCE(c.enrolled, 0)")
     List<Course> findAvailableCourses();
 
     // 检查课程代码是否存在

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS courses (
     course_code VARCHAR(50) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
     capacity INT NOT NULL DEFAULT 0,
-    enrolled_count INT DEFAULT 0,
+    enrolled_count INT NOT NULL DEFAULT 0,
     instructor_id VARCHAR(100),
     instructor_name VARCHAR(100),
     instructor_email VARCHAR(100),
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS students (
     major VARCHAR(100),
     grade INT,
     email VARCHAR(100) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 选课表
@@ -40,3 +40,12 @@ CREATE TABLE IF NOT EXISTS enrollments (
     INDEX idx_course_status (course_id, status),
     INDEX idx_student_status (student_id, status)
 );
+
+-- 为课程表添加索引
+CREATE INDEX idx_course_code ON courses(course_code);
+CREATE INDEX idx_course_instructor ON courses(instructor_id);
+CREATE INDEX idx_course_capacity ON courses(capacity, enrolled_count);
+
+-- 为学生表添加索引
+CREATE INDEX idx_student_major_grade ON students(major, grade);
+CREATE INDEX idx_student_email ON students(email);

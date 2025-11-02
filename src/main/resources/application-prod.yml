@@ -11,7 +11,7 @@ spring:
       max-lifetime: 1800000
   jpa:
     hibernate:
-      ddl-auto: validate  # 生产环境验证表结构
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -23,7 +23,7 @@ spring:
   # SQL 初始化配置
   sql:
     init:
-      mode: never  # 生产环境也执行初始化
+      mode: never
       platform: mysql
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
