@@ -1,0 +1,384 @@
+### 测试场景 1：完整的课程管理流程
+
+### 1. 创建 3 门不同的课程
+
+### 创建课程（1）
+POST http://localhost:8080/api/courses
+Content-Type: application/json
+
+{
+    "code": "CS202",
+    "title": "数据结构与算法",
+    "instructor": {
+        "id": "T101",
+        "name": "陈教授",
+        "email": "chen@example.edu.cn"
+    },
+    "schedule": {
+        "dayOfWeek": "MONDAY",
+        "startTime": "10:00",
+        "endTime": "12:00",
+        "expectedAttendance": 45
+    },
+    "capacity": 55
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+### 创建课程（2）
+POST http://localhost:8080/api/courses
+Content-Type: application/json
+
+{
+    "code": "MATH202",
+    "title": "离散数学",
+    "instructor": {
+        "id": "T102",
+        "name": "刘教授",
+        "email": "liu@example.edu.cn"
+    },
+    "schedule": {
+        "dayOfWeek": "TUESDAY",
+        "startTime": "14:00",
+        "endTime": "16:00",
+        "expectedAttendance": 35
+    },
+    "capacity": 45
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+### 创建课程（3）
+POST http://localhost:8080/api/courses
+Content-Type: application/json
+
+{
+    "code": "EE201",
+    "title": "电路原理",
+    "instructor": {
+        "id": "T103",
+        "name": "赵教授",
+        "email": "zhao@example.edu.cn"
+    },
+    "schedule": {
+        "dayOfWeek": "WEDNESDAY",
+        "startTime": "08:00",
+        "endTime": "10:00",
+        "expectedAttendance": 40
+    },
+    "capacity": 50
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+### 2. 查询所有课程，验证返回 3 条记录
+GET http://localhost:8080/api/courses
+
+### 预期结果：200 OK，返回课程列表
+### 实际响应结果：200 OK
+
+### 3. 根据 ID 查询某门课程
+GET http://localhost:8080/api/courses/cce5d7d0-8f90-4baf-ba8e-c0c11f73a4bc
+
+### 预期结果：200 OK
+### 实际响应结果：200 OK
+
+### 4. 更新该课程的信息
+PUT http://localhost:8080/api/courses/cce5d7d0-8f90-4baf-ba8e-c0c11f73a4bc
+Content-Type: application/json
+
+{
+    "code": "EE201",
+    "title": "电路原理",
+    "instructor": {
+        "id": "T103666",
+        "name": "赵教授",
+        "email": "zhao@example.edu.cn"
+    },
+    "schedule": {
+        "dayOfWeek": "WEDNESDAY",
+        "startTime": "08:00",
+        "endTime": "10:00",
+        "expectedAttendance": 40
+    },
+    "capacity": 50
+}
+
+### 预期结果：200 OK
+### 实际响应结果：200 OK
+
+### 5. 删除该课程
+DELETE http://localhost:8080/api/courses/cce5d7d0-8f90-4baf-ba8e-c0c11f73a4bc
+
+### 预期结果：204 No Content
+### 实际响应结果：204 No Content
+
+### 6. 再次查询，验证返回 404
+GET http://localhost:8080/api/courses/cce5d7d0-8f90-4baf-ba8e-c0c11f73a4bc
+
+### 预期结果：404 Not Found
+### 实际响应结果：404 Not Found
+
+### 测试场景 2：选课业务流程
+
+### 1. 创建一门容量为 2 的课程
+POST http://localhost:8080/api/courses
+Content-Type: application/json
+
+{
+    "code": "SE401",
+    "title": "软件工程实践",
+    "instructor": {
+        "id": "T201",
+        "name": "吴教授",
+        "email": "wu@example.edu.cn"
+    },
+    "schedule": {
+        "dayOfWeek": "THURSDAY",
+        "startTime": "09:00",
+        "endTime": "11:00",
+        "expectedAttendance": 25
+    },
+    "capacity": 2
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+### 2. 学生 S001 选课，验证成功
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+    "courseId": "d8491241-5619-4b9f-b1e2-3739de0144a2",
+    "studentId": "S001"
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+### 3. 学生 S002 选课，验证成功
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+    "courseId": "d8491241-5619-4b9f-b1e2-3739de0144a2",
+    "studentId": "S002"
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+### 4. 学生 S003 选课，验证失败（容量已满）
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+    "courseId": "d8491241-5619-4b9f-b1e2-3739de0144a2",
+    "studentId": "S003"
+}
+
+### 预期结果：400 Bad Request
+### 实际响应结果：400 Bad Request
+
+### 5. 学生 S001 再次选课，验证失败（重复选课）
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+    "courseId": "d8491241-5619-4b9f-b1e2-3739de0144a2",
+    "studentId": "S001"
+}
+
+### 预期结果：400 Bad Request
+### 实际响应结果：400 Bad Request
+
+### 6. 查询课程，验证 enrolled 字段为 2
+GET http://localhost:8080/api/courses/d8491241-5619-4b9f-b1e2-3739de0144a2
+
+### 预期结果：200 OK
+### 实际响应结果：200 OK
+
+### 测试场景 3：学生管理流程
+
+### 1. 创建 3 个不同学号的学生
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+    "studentId": "S001",
+    "name": "李明",
+    "major": "软件工程",
+    "grade": 2024,
+    "email": "liming@example.com"
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+    "studentId": "S002",
+    "name": "王小红",
+    "major": "计算机科学",
+    "grade": 2024,
+    "email": "wangxiaohong@example.com"
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+    "studentId": "S003",
+    "name": "陈小刚",
+    "major": "信息安全",
+    "grade": 2024,
+    "email": "chenxiaogang@example.com"
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+### 2. 查询所有学生，验证返回记录
+GET http://localhost:8080/api/students
+
+### 预期结果：200 OK
+### 实际响应结果：200 OK
+
+### 3. 根据 ID 查询某个学生
+GET http://localhost:8080/api/students/93544b36-ea46-485b-8b57-33a98401cf6f
+
+### 预期结果：200 OK
+### 实际响应结果：200 OK
+
+### 4. 更新该学生的专业和邮箱信息
+PUT http://localhost:8080/api/students/93544b36-ea46-485b-8b57-33a98401cf6f
+Content-Type: application/json
+
+{
+    "studentId": "S001",
+    "name": "李明",
+    "major": "计算机科学与技术",
+    "grade": 2023,
+    "email": "liming_updated@example.com"
+}
+
+### 预期结果：200 OK
+### 实际响应结果：200 OK
+
+### 5. 尝试让一个不存在的学生选课
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+    "courseId": "c0e5a05f-d530-4fff-8a7f-ed1e10ed7797",
+    "studentId": "NON_EXISTENT"
+}
+
+### 预期结果：404 Not Found
+### 实际响应结果：404 Not Found
+
+### 6. 让学生 S001 选课，然后尝试删除该学生
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+    "courseId": "c0e5a05f-d530-4fff-8a7f-ed1e10ed7797",
+    "studentId": "S001"
+}
+
+### 预期结果：201 Created
+### 实际响应结果：201 Created
+
+DELETE http://localhost:8080/api/students/93544b36-ea46-485b-8b57-33a98401cf6f
+
+### 预期结果：400 Bad Request
+### 实际响应结果：400 Bad Request
+
+### 7. 删除没有选课记录的学生
+DELETE http://localhost:8080/api/students/c6bdac85-de7d-426b-9b4a-a630302a377c
+
+### 预期结果：204 No Content
+### 实际响应结果：204 No Content
+
+### 测试场景 4：错误处理
+
+### 1. 查询不存在的课程 ID
+GET http://localhost:8080/api/courses/non_existent_id
+
+### 预期结果：404 Not Found
+### 实际响应结果：404 Not Found
+
+### 2. 创建课程时缺少必填字段
+POST http://localhost:8080/api/courses
+Content-Type: application/json
+
+{
+    "code": "",
+    "title": "测试课程",
+    "instructor": {
+        "id": "T001",
+        "name": "测试教授",
+        "email": "test@example.com"
+    },
+    "schedule": {
+        "dayOfWeek": "MONDAY",
+        "startTime": "08:00",
+        "endTime": "10:00",
+        "expectedAttendance": 30
+    },
+    "capacity": 40
+}
+
+### 预期结果：400 Bad Request
+### 实际响应结果：400 Bad Request
+
+### 3. 选课时提供不存在的课程 ID
+POST http://localhost:8080/api/enrollments
+Content-Type: application/json
+
+{
+    "courseId": "non_existent_course",
+    "studentId": "S001"
+}
+
+### 预期结果：404 Not Found
+### 实际响应结果：404 Not Found
+
+### 4. 创建学生时使用重复的 studentId
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+    "studentId": "S001",
+    "name": "重复学生",
+    "major": "测试专业",
+    "grade": 2024,
+    "email": "duplicate@example.com"
+}
+
+### 预期结果：400 Bad Request
+### 实际响应结果：400 Bad Request
+
+### 5. 创建学生时使用无效的邮箱格式
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+    "studentId": "S999",
+    "name": "测试学生",
+    "major": "测试专业",
+    "grade": 2024,
+    "email": "invalid-email"
+}
+
+### 预期结果：400 Bad Request
+### 实际响应结果：400 Bad Request
