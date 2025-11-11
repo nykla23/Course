@@ -26,7 +26,7 @@ public class CourseService {
     }
 
     public Optional<Course> getByCode(String code) {
-        return courseRepository.findByCode(code);
+        return courseRepository.findByCourseCode(code);
     }
 
     public Course createCourse(Course course) {
@@ -47,7 +47,7 @@ public class CourseService {
             throw new IllegalArgumentException("课程容量必须大于0");
         }
 
-        if (courseRepository.existsByCode(course.getCode())){
+        if (courseRepository.existsByCourseCode(course.getCode())){
             throw new IllegalArgumentException("课程代码已存在");
         }
 
@@ -61,7 +61,7 @@ public class CourseService {
         Course existingCourse = courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("课程不存在"));
 
         if (courseUpdate.getCode() != null && !courseUpdate.getCode().equals(existingCourse.getCode())) {
-            if (courseRepository.existsByCode(courseUpdate.getCode())) {
+            if (courseRepository.existsByCourseCode(courseUpdate.getCode())) {
                 throw new IllegalArgumentException("课程代码已存在");
             }
             existingCourse.setCode(courseUpdate.getCode());

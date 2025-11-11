@@ -194,14 +194,14 @@ public class EnrollmentService {
 
     // 统计课程活跃选课人数
     public long countActiveEnrollmentsByCourse(String courseCode) {
-        Optional<Course> course = courseRepository.findByCode(courseCode);
+        Optional<Course> course = courseRepository.findByCourseCode(courseCode);
         return course.map(c -> enrollmentRepository.countActiveEnrollmentsByCourse(c)).orElse(0L);
     }
 
     // 检查学生是否已选某课程（活跃状态）
     public boolean hasActiveEnrollment(String studentId, String courseCode) {
         Optional<Student> student = studentRepository.findByStudentId(studentId);
-        Optional<Course> course = courseRepository.findByCode(courseCode);
+        Optional<Course> course = courseRepository.findByCourseCode(courseCode);
 
         if (student.isPresent() && course.isPresent()) {
             return enrollmentRepository.existsByStudentAndCourseAndActive(student.get(), course.get());
@@ -242,7 +242,7 @@ public class EnrollmentService {
      * 获取课程的活跃选课列表
      */
     public List<Enrollment> findActiveEnrollmentsByCourse(String courseCode) {
-        Optional<Course> course = courseRepository.findByCode(courseCode);
+        Optional<Course> course = courseRepository.findByCourseCode(courseCode);
         if (course.isPresent()) {
             return enrollmentRepository.findByCourseAndStatus(course.get(), EnrollmentStatus.ACTIVE);
         }

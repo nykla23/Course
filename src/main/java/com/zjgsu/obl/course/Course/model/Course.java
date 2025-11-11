@@ -15,7 +15,7 @@ public class Course {
     private String id; // 系统生成的课程ID
 
     @Column(name = "course_code", unique = true,nullable = false,length = 50)
-    private String code; // 课程代码，如 "CS101"
+    private String courseCode; // 课程代码，如 "CS101"
 
     @Column(nullable = false)
     private String title; // 课程名称
@@ -41,7 +41,7 @@ public class Course {
     private Integer capacity = 0; // 课程容量
 
     @Column(name = "enrolled_count",nullable = false)
-    private Integer enrolled = 0; // 已选课人数，初始为0
+    private Integer enrolledCount = 0; // 已选课人数，初始为0
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -61,17 +61,17 @@ public class Course {
     }
 
     public Course() {
-        this.enrolled = 0;
+        this.enrolledCount = 0;
     }
 
     public Course(String id, String code, String title, Instructor instructor, ScheduleSlot schedule, Integer capacity) {
         this.id = id;
-        this.code = code;
+        this.courseCode = code;
         this.title = title;
         this.instructor = instructor;
         this.schedule = schedule;
         this.capacity = capacity;
-        this.enrolled = 0;
+        this.enrolledCount = 0;
     }
     public String getId() {
         return id;
@@ -80,10 +80,10 @@ public class Course {
         this.id = id;
     }
     public String getCode() {
-        return code;
+        return courseCode;
     }
     public void setCode(String code) {
-        this.code = code;
+        this.courseCode = code;
     }
     public String getTitle() {
         return title;
@@ -110,10 +110,10 @@ public class Course {
         this.capacity = capacity;
     }
     public Integer getEnrolled() {
-        return enrolled;
+        return enrolledCount;
     }
     public void setEnrolled(Integer enrolled) {
-        this.enrolled = enrolled;
+        this.enrolledCount = enrolled;
     }
 
     public LocalDateTime getCreatedAt() {
