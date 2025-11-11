@@ -43,7 +43,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
     Optional<Enrollment> findByCourseIdAndStudentId(@Param("courseId") String courseId, @Param("studentId") String studentId);
 
     // 按课程代码查询选课记录
-    @Query("SELECT e FROM Enrollment e WHERE e.course.code = :courseCode")
+    @Query("SELECT e FROM Enrollment e WHERE e.course.courseCode = :courseCode")
     List<Enrollment> findByCourseCode(@Param("courseCode") String courseCode);
 
     // 按学生学号查询选课记录
@@ -56,7 +56,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, String> 
 
     // 添加：按多个条件组合查询
     @Query("SELECT e FROM Enrollment e WHERE " +
-            "(:courseCode IS NULL OR e.course.code = :courseCode) AND " +
+            "(:courseCode IS NULL OR e.course.courseCode = :courseCode) AND " +
             "(:studentId IS NULL OR e.student.studentId = :studentId) AND " +
             "(:status IS NULL OR e.status = :status)")
     List<Enrollment> findByMultipleCriteria(@Param("courseCode") String courseCode,
