@@ -1,17 +1,15 @@
 spring:
-  profiles:
-    active: dev  # 默认使用开发环境
+  config:
+    activate:
+      on-profile: "default"
+  application:
+    name: 校园选课系统
 
-# 应用信息
 app:
   name: 校园选课系统
-  version: v1.1.0
-  description: 为校园选课系统添加数据库支持
+  version: v1.2.0
 
-# 日志配置
 logging:
   level:
     com.zjgsu.obl.course.Course: INFO
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.transaction: DEBUG
