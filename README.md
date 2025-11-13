@@ -629,4 +629,20 @@ grep "ERROR" logs/application.log
 # 查看特定类的日志  
 grep "StudentService" logs/application.log
 ```
+## Docker 部署指南
 
+### 快速开始
+
+#### 前提条件
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+
+### 部署步骤
+
+1. **构建和启动**
+   ```bash
+   # 构建镜像
+   docker compose build
+   
+   # 启动所有服务
+   docker compose up -d
