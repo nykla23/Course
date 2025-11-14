@@ -1,4 +1,4 @@
-# 多阶段构建 - 符合200MB要求的版本
+# 多阶段构建
 FROM maven:3.9-eclipse-temurin-17 AS builder
 
 # 使用国内 Maven 镜像加速
