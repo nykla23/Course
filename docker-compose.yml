@@ -1,6 +1,4 @@
-
 services:
-  # 应用服务
   app:
     build:
       context: .
@@ -28,7 +26,6 @@ services:
       retries: 3
       start_period: 40s
 
-  # 数据库服务
   mysql:
     image: mysql:8.0
     container_name: coursehub-mysql
@@ -52,12 +49,10 @@ services:
       retries: 5
       start_period: 30s
 
-# 数据卷
 volumes:
   mysql-data:
     driver: local
 
-# 网络
 networks:
   coursehub-network:
     driver: bridge
